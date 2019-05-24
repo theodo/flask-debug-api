@@ -1,27 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <body>
-{{ data }}
-{% for method in methods %}
-<button class="debug-api" data-debug-api-method="{{ method }}">{{ method }}</button>
-{% endfor %}
-<br>
-<textarea rows="15" cols="70" id="data"></textarea>
-<script type="text/javascript">
-;[].slice.call(document.querySelectorAll('button.debug-api')).forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var method = btn.getAttribute('data-debug-api-method')
-      var xhr = new XMLHttpRequest()
-      xhr.open(method, location)
-      xhr.setRequestHeader('Content-Type', 'application/json')
-      xhr.onreadystatechange = function(){
-        if(xhr.readyState == 4){
-          document.open()
-          document.write(xhr.responseText)
-          document.close()
-        }
-      }
-      xhr.send(document.getElementById('data').value)
-    })
-})
-</script>
+  {{ data }}
+  {% for method in methods %}
+  <button class="debug-api" data-debug-api-method="{{ method }}">
+    {{ method }}
+  </button>
+  {% endfor %}
+  <br />
+  <textarea rows="15" cols="70" id="data"></textarea>
+  <br />
+  <br />
+  <div>Headers (in JSON, except Content-Type: application/json)</div>
+  <textarea rows="15" cols="70" id="headers"></textarea>
+  <br />
+  <script type="text/javascript">
+    [].slice
+      .call(document.querySelectorAll("button.debug-api"))
+      .forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var method = btn.getAttribute("data-debug-api-method");
+          var xhr = new XMLHttpRequest();
+          xhr.open(method, location);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          const headers = document.getElementById("headers").value
+            ? JSON.parse(document.getElementById("headers").value)
+            : [];
+          for (headerName in headers) {
+            xhr.setRequestHeader(headerName, headers[headerName]);
+          }
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+              document.open();
+              document.write(xhr.responseText);
+              document.close();
+            }
+          };
+          xhr.send(document.getElementById("data").value);
+        });
+      });
+  </script>
 </body>
